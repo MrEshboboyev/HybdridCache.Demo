@@ -34,6 +34,8 @@ builder.Services.AddHybridCache(options =>
     };
 });
 
+builder.AddRedisDistributedCache("redis");
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
@@ -66,6 +68,18 @@ app.MapDelete("movies/{imdbId}/invalidate", async (
     return Results.NoContent();
 })
 .WithName("InvalidateMovieCache")
+.WithTags("Movies")
+.WithOpenApi();
+
+app.MapDelete("invalidate-tags", async (
+    string tags,
+    HybridCache hybridCache,
+    CancellationToken cancellationToken) =>
+{
+    await hybridCache.RemoveByTagAsync(tags.Split(','), cancellationToken);
+    return Results.NoContent();
+})
+.WithName("InvalidateCacheByTag")
 .WithTags("Movies")
 .WithOpenApi();
 
