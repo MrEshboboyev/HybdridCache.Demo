@@ -2,9 +2,39 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.35906.104
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movies.Api", "Movies.Api\Movies.Api.csproj", "{7C156204-4FF7-4698-915F-EE654F86C2F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HybdridCache.Demo.AppHost", "aspire\HybdridCache.Demo.AppHost\HybdridCache.Demo.AppHost.csproj", "{6EA6BD42-5CD1-472A-A2C7-EDFBFF8FF0DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HybdridCache.Demo.ServiceDefaults", "aspire\HybdridCache.Demo.ServiceDefaults\HybdridCache.Demo.ServiceDefaults.csproj", "{93ACB7D4-FFC5-7708-B5EF-93FA660EFDE1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "aspire", "aspire", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7C156204-4FF7-4698-915F-EE654F86C2F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C156204-4FF7-4698-915F-EE654F86C2F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C156204-4FF7-4698-915F-EE654F86C2F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C156204-4FF7-4698-915F-EE654F86C2F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EA6BD42-5CD1-472A-A2C7-EDFBFF8FF0DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EA6BD42-5CD1-472A-A2C7-EDFBFF8FF0DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EA6BD42-5CD1-472A-A2C7-EDFBFF8FF0DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EA6BD42-5CD1-472A-A2C7-EDFBFF8FF0DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93ACB7D4-FFC5-7708-B5EF-93FA660EFDE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93ACB7D4-FFC5-7708-B5EF-93FA660EFDE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93ACB7D4-FFC5-7708-B5EF-93FA660EFDE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93ACB7D4-FFC5-7708-B5EF-93FA660EFDE1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6EA6BD42-5CD1-472A-A2C7-EDFBFF8FF0DC} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{93ACB7D4-FFC5-7708-B5EF-93FA660EFDE1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FBD92411-4893-4B6B-A261-1EA43C8EA3F5}
