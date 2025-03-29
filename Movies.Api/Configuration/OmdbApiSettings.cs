@@ -2,5 +2,6 @@
 
 public class OmdbApiSettings
 {
-    public string? BaseUrl { get; internal set; }
+    public string BaseUrl { get; set; }
+    public string ApiKey { get; set; }
 }
