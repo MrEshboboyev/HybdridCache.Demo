@@ -1,4 +1,5 @@
-﻿using Movies.Api.Clients;
+﻿using MediatR;
+using Movies.Api.Clients;
 using Movies.Api.Models;
 
 namespace Movies.Api.Services;

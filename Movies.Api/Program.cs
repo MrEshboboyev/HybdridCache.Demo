@@ -1,6 +1,9 @@
+//using MediatR;
 using Microsoft.Extensions.Caching.Hybrid;
+using Movies.Api;
 using Movies.Api.Clients;
 using Movies.Api.Configuration;
+using Movies.Api.Models;
 using Movies.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +39,20 @@ builder.Services.AddHybridCache(options =>
 
 builder.AddRedisDistributedCache("redis");
 
+//builder.Services.AddMediatR(cfg =>
+//{
+//    cfg.RegisterServicesFromAssemblyContaining<Program>();
+
+//    cfg.AddOpenBehavior(typeof(LoggingPipelineBehavior<,>));
+//});
+
+// Register the request handler for GetMovieRequest
+builder.Services.AddScoped<GetMovieRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<GetMovieRequest, Movie?>>(
+    sp => new LoggingRequestHandler<GetMovieRequest, Movie?>(
+        sp.GetRequiredService<GetMovieRequestHandler>(),
+        sp.GetRequiredService<ILogger<LoggingRequestHandler<GetMovieRequest, Movie?>>>()));
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
@@ -43,14 +60,10 @@ app.MapDefaultEndpoints();
 // Endpoint to get a movie by IMDb id. HybridCache wraps the call to the movie service.
 app.MapGet("movies/{imdbId}", async (
     string imdbId,
-    IMovieService movieService,
-    HybridCache hybridCache,
+    IRequestHandler<GetMovieRequest, Movie?> handler,
     CancellationToken cancellationToken) =>
 {
-    var movie = await hybridCache.GetOrCreateAsync($"movies:{imdbId}", async ct =>
-    {
-        return await movieService.GetMovieByImdbIdAsync(imdbId, ct);
-    }, cancellationToken: cancellationToken);
+    var movie = await handler.Handle(new GetMovieRequest(imdbId), cancellationToken);
 
     return movie is not null ? Results.Ok(movie) : Results.NotFound();
 })
