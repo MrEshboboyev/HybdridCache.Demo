@@ -1,10 +1,12 @@
 //using MediatR;
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Caching.Memory;
 using Movies.Api;
 using Movies.Api.Clients;
 using Movies.Api.Configuration;
 using Movies.Api.Models;
 using Movies.Api.Services;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,8 @@ builder.Services.AddHybridCache(options =>
 });
 
 builder.AddRedisDistributedCache("redis");
+
+builder.Services.AddHostedService<CacheInvalidationBackgroundService>();
 
 //builder.Services.AddMediatR(cfg =>
 //{
@@ -75,9 +79,16 @@ app.MapGet("movies/{imdbId}", async (
 app.MapDelete("movies/{imdbId}/invalidate", async (
     string imdbId,
     HybridCache hybridCache,
+    IConnectionMultiplexer connectionMultiplexer,
     CancellationToken cancellationToken) =>
 {
-    await hybridCache.RemoveAsync($"movies:{imdbId}", cancellationToken);
+    var key = $"movies:{imdbId}";
+    await hybridCache.RemoveAsync(key, cancellationToken);
+
+    var subscriber = connectionMultiplexer.GetSubscriber();
+    await subscriber.PublishAsync(RedisChannel.Literal("cache-invalidation"), new RedisValue(key));
+
+
     return Results.NoContent();
 })
 .WithName("InvalidateMovieCache")
@@ -104,3 +115,23 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.Run();
+
+internal sealed class CacheInvalidationBackgroundService(
+    IConnectionMultiplexer connectionMultiplexer,
+    HybridCache hybridCache) : BackgroundService
+{
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        var subscriber = connectionMultiplexer.GetSubscriber();
+
+        await subscriber.SubscribeAsync(RedisChannel.Literal("cache-invalidation"), (_, key) =>
+        {
+            var task = hybridCache.RemoveAsync(key);
+
+            if (!task.IsCompleted)
+            {
+                task.GetAwaiter().GetResult();
+            }
+        });
+    }
+}
